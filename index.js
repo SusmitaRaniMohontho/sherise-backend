@@ -22,14 +22,16 @@ app.get("/", (req, res) => {
 app.post("/api/auth/login", (req, res) => {
   const { email, password } = req.body;
 
-  // এই লাইনটি এখানে বসিয়ে দেবে, তাহলে লগইন রিকোয়েস্ট আসলে টার্মিনালে দেখা যাবে
   console.log("Login Attempt Received - Email:", email);
 
   if (!email || !password) {
     return res.status(400).json({ success: false, message: "Email and password are required!" });
   }
 
-  if (email === "user@sherise.com" && password === "123456") {
+  // Check against static test user or registered users array
+  const foundUser = users.find((u) => u.email === email && u.password === password);
+
+  if ((email === "user@sherise.com" && password === "123456") || foundUser) {
     return res.status(200).json({
       success: true,
       message: "Login successful!",
@@ -41,6 +43,33 @@ app.post("/api/auth/login", (req, res) => {
       message: "Invalid email or password. Please try again.",
     });
   }
+});
+
+// Register / Sign-up - POST API
+app.post("/api/auth/register", (req, res) => {
+  const { name, email, password } = req.body;
+
+  console.log("Register Attempt Received - Email:", email);
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ success: false, message: "All fields are required!" });
+  }
+
+  // Check if user already exists
+  const existingUser = users.find((u) => u.email === email);
+  if (existingUser) {
+    return res.status(400).json({ success: false, message: "User already exists with this email!" });
+  }
+
+  // Save user to the in-memory array
+  const newUser = { id: Date.now(), name, email, password };
+  users.push(newUser);
+
+  return res.status(201).json({
+    success: true,
+    message: "Registration successful!",
+    token: "dummy-jwt-token-" + Date.now(),
+  });
 });
 
 // Help Page - POST API
