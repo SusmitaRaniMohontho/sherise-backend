@@ -1,6 +1,9 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import authRoutes from "./routes/authRoutes.js"; // তোমার লগইন রাউট আলাদা ফাইলে থেকে এখানে কানেক্ট হলো
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -10,69 +13,12 @@ app.use(cors());
 app.use(express.json());
 
 // In-Memory Storage
-let users = [];
-let messages = [];
+let messages = []; // তোমার ফ্রেন্ডের হেল্প পেজের মেসেজগুলো এখানে নিরাপদে আছে
 
-// Base Route Test
-app.get("/", (req, res) => {
-  res.send("SheRise Express Backend Server is running successfully!");
-});
+// 1. Your Login Route (Connected from authRoutes.js)
+app.use("/api/auth", authRoutes);
 
-// Login - POST API
-app.post("/api/auth/login", (req, res) => {
-  const { email, password } = req.body;
-
-  console.log("Login Attempt Received - Email:", email);
-
-  if (!email || !password) {
-    return res.status(400).json({ success: false, message: "Email and password are required!" });
-  }
-
-  // Check against static test user or registered users array
-  const foundUser = users.find((u) => u.email === email && u.password === password);
-
-  if ((email === "user@sherise.com" && password === "123456") || foundUser) {
-    return res.status(200).json({
-      success: true,
-      message: "Login successful!",
-      token: "dummy-jwt-token-12345",
-    });
-  } else {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid email or password. Please try again.",
-    });
-  }
-});
-
-// Register / Sign-up - POST API
-app.post("/api/auth/register", (req, res) => {
-  const { name, email, password } = req.body;
-
-  console.log("Register Attempt Received - Email:", email);
-
-  if (!name || !email || !password) {
-    return res.status(400).json({ success: false, message: "All fields are required!" });
-  }
-
-  // Check if user already exists
-  const existingUser = users.find((u) => u.email === email);
-  if (existingUser) {
-    return res.status(400).json({ success: false, message: "User already exists with this email!" });
-  }
-
-  // Save user to the in-memory array
-  const newUser = { id: Date.now(), name, email, password };
-  users.push(newUser);
-
-  return res.status(201).json({
-    success: true,
-    message: "Registration successful!",
-    token: "dummy-jwt-token-" + Date.now(),
-  });
-});
-
-// Help Page - POST API
+// 2. Friend's Help Page - POST API (তোমার ফ্রেন্ডের কোড হুবহু ঠিক রাখা হয়েছে)
 app.post("/api/help", (req, res) => {
   const { name, email, message } = req.body;
 
@@ -92,9 +38,14 @@ app.post("/api/help", (req, res) => {
   });
 });
 
-// Help Page - GET API
+// 3. Friend's Help Page - GET API (তোমার ফ্রেন্ডের কোড হুবহু ঠিক রাখা হয়েছে)
 app.get("/api/help", (req, res) => {
   res.status(200).json({ success: true, data: messages });
+});
+
+// Base Route Test
+app.get("/", (req, res) => {
+  res.send("SheRise Express Backend Server is running successfully!");
 });
 
 // Server Start
