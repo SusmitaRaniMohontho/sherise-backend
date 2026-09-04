@@ -16,6 +16,9 @@ import authRoutes from "./routes/authRoutes.js";
 // Susmita's Code (সুস্মিতার কোড - Help & Support)
 import helpRoutes from "./routes/helpRoutes.js"; 
 
+//mahi
+import loanRoutes from "./routes/loanRoutes.js";
+
 dotenv.config();
 
 const app = express();
@@ -33,7 +36,7 @@ app.use(express.json());
 // MongoDB Atlas Connection Configuration
 mongoose
   .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000, // স্লো নেটওয়ার্কের জন্য ১০ সেকেন্ড টাইম-আউট
+    serverSelectionTimeoutMS: 10000, // স্লো নেটওয়ার্কের জন্য ১০ সেকেন্ড টাইম-আউট
     family: 4,                       // IPv4 বাধ্যবাধকতা ফোরস করার জন্য
   })
   .then(() => {
@@ -52,6 +55,9 @@ app.use("/api/auth", authRoutes);
 
 // Susmita's Work: Help & Support Routes (Contact Messages / FAQs)
 app.use("/api/help", helpRoutes);
+
+//mahi
+app.use("/api/loans", loanRoutes);
 
 // Base Route (Server Health Check)
 app.get("/", (req, res) => {
