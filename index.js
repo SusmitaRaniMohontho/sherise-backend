@@ -1,64 +1,66 @@
+import dns from "node:dns";
+dns.setServers(["8.8.8.8", "8.8.4.4"]); // ISP-র DNS ব্লকিং বাইপাস করার জন্য Google Public DNS ফোরস করা হলো
+dns.setDefaultResultOrder("ipv4first");
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import authRoutes from "./routes/authRoutes.js"; // তোমার লগইন রাউট আলাদা ফাইলে থেকে এখানে কানেক্ট হলো
+
+// ==========================================
+// 1. ROUTE IMPORTS (রুট ইমপোর্ট)
+// ==========================================
+// Ankita's Code (অঙ্কিতার কোড - Authentication)
+import authRoutes from "./routes/authRoutes.js"; 
+
+// Susmita's Code (সুস্মিতার কোড - Help & Support)
+import helpRoutes from "./routes/helpRoutes.js"; 
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// ==========================================
+// 2. MIDDLEWARES (মিডলওয়্যার)
+// ==========================================
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Database Connection
-mongoose.connect(process.env.MONGO_URI)
+// ==========================================
+// 3. DATABASE CONNECTION (ডাটাবেজ কানেকশন)
+// ==========================================
+// MongoDB Atlas Connection Configuration
+mongoose
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 10000, // স্লো নেটওয়ার্কের জন্য ১০ সেকেন্ড টাইম-আউট
+    family: 4,                       // IPv4 বাধ্যবাধকতা ফোরস করার জন্য
+  })
   .then(() => {
     console.log("MongoDB Connected Successfully!");
   })
   .catch((err) => {
-    console.error("MongoDB Connection Failed:", err);
+    console.error("MongoDB Connection Failed Error:", err.message);
   });
 
-// In-Memory Storage
-let messages = []; // তোমার ফ্রেন্ডের হেল্প পেজের মেসেজগুলো এখানে নিরাপদে আছে
+// ==========================================
+// 4. API ROUTES (এপিআই রুটসমূহ)
+// ==========================================
 
-// 1. Your Login Route (Connected from authRoutes.js)
+// Ankita's Work: User Authentication Routes (Login / Register)
 app.use("/api/auth", authRoutes);
 
-// 2. Friend's Help Page - POST API (তোমার ফ্রেন্ডের কোড হুবহু ঠিক রাখা হয়েছে)
-app.post("/api/help", (req, res) => {
-  const { name, email, message } = req.body;
+// Susmita's Work: Help & Support Routes (Contact Messages / FAQs)
+app.use("/api/help", helpRoutes);
 
-  if (!name || !email || !message) {
-    return res.status(400).json({ success: false, message: "All fields are required!" });
-  }
-
-  const newMessage = { id: Date.now(), name, email, message };
-  messages.push(newMessage);
-
-  console.log("New Message Received:", newMessage);
-
-  res.status(201).json({
-    success: true,
-    message: "Message sent to backend successfully!",
-    data: newMessage,
-  });
-});
-
-// 3. Friend's Help Page - GET API (তোমার ফ্রেন্ডের কোড হুবহু ঠিক রাখা হয়েছে)
-app.get("/api/help", (req, res) => {
-  res.status(200).json({ success: true, data: messages });
-});
-
-// Base Route Test
+// Base Route (Server Health Check)
 app.get("/", (req, res) => {
   res.send("SheRise Express Backend Server is running successfully!");
 });
 
-// Server Start
+// ==========================================
+// 5. SERVER INITIALIZATION (সার্ভার স্টার্ট)
+// ==========================================
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
