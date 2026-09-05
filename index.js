@@ -1,5 +1,5 @@
 import dns from "node:dns";
-dns.setServers(["8.8.8.8", "8.8.4.4"]); // ISP-র DNS ব্লকিং বাইপাস করার জন্য Google Public DNS ফোরস করা হলো
+dns.setServers(["8.8.8.8", "8.8.4.4"]); // ISP-er DNS blocking bypass korar jonno Google Public DNS force kora holo
 dns.setDefaultResultOrder("ipv4first");
 
 import express from "express";
@@ -8,15 +8,15 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 // ==========================================
-// 1. ROUTE IMPORTS (রুট ইমপোর্ট)
+// 1. ROUTE IMPORTS
 // ==========================================
-// Ankita's Code (অঙ্কিতার কোড - Authentication)
+// Ankita's Code (Authentication)
 import authRoutes from "./routes/authRoutes.js"; 
 
-// Susmita's Code (সুস্মিতার কোড - Help & Support)
+// Susmita's Code (Help & Support)
 import helpRoutes from "./routes/helpRoutes.js"; 
 
-//mahi
+// Mahi's Code (Loan Feature)
 import loanRoutes from "./routes/loanRoutes.js";
 
 dotenv.config();
@@ -25,19 +25,19 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ==========================================
-// 2. MIDDLEWARES (মিডলওয়্যার)
+// 2. MIDDLEWARES
 // ==========================================
 app.use(cors());
 app.use(express.json());
 
 // ==========================================
-// 3. DATABASE CONNECTION (ডাটাবেজ কানেকশন)
+// 3. DATABASE CONNECTION
 // ==========================================
 // MongoDB Atlas Connection Configuration
 mongoose
   .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000, // স্লো নেটওয়ার্কের জন্য ১০ সেকেন্ড টাইম-আউট
-    family: 4,                       // IPv4 বাধ্যবাধকতা ফোরস করার জন্য
+    serverSelectionTimeoutMS: 10000, // Slow network er jonno 10 second time-out
+    family: 4,                       // IPv4 force korar jonno
   })
   .then(() => {
     console.log("MongoDB Connected Successfully!");
@@ -47,7 +47,7 @@ mongoose
   });
 
 // ==========================================
-// 4. API ROUTES (এপিআই রুটসমূহ)
+// 4. API ROUTES
 // ==========================================
 
 // Ankita's Work: User Authentication Routes (Login / Register)
@@ -56,7 +56,7 @@ app.use("/api/auth", authRoutes);
 // Susmita's Work: Help & Support Routes (Contact Messages / FAQs)
 app.use("/api/help", helpRoutes);
 
-//mahi
+// Mahi's Work: Loan Routes
 app.use("/api/loans", loanRoutes);
 
 // Base Route (Server Health Check)
@@ -65,7 +65,7 @@ app.get("/", (req, res) => {
 });
 
 // ==========================================
-// 5. SERVER INITIALIZATION (সার্ভার স্টার্ট)
+// 5. SERVER INITIALIZATION
 // ==========================================
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
