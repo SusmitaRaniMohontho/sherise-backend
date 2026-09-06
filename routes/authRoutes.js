@@ -3,18 +3,18 @@ import User from "../models/user.js";
 
 const router = express.Router();
 
-// ১. সাইন-আপ রাউট (প্রথমে ডেটাবেজে অ্যাকাউন্ট তৈরি করার জন্য)
+// 1.for signup to database account create
 router.post("/signup", async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        // চেক করা এই ইমেইলে অলরেডি কোনো ইউজার আছে কি না
+        //email e kono user ache kina check
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: "Email is already in use" });
         }
 
-        // নতুন ইউজার সেভ করা
+        // new user save
         const newUser = new User({ name, email, password });
         await newUser.save();
 
@@ -24,18 +24,18 @@ router.post("/signup", async (req, res) => {
     }
 });
 
-// ২. লগইন রাউট (পরবর্তীতে ভেরিফাই করার জন্য)
+// 2.login route for verification
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // ডেটাবেজে ইমেইল দিয়ে ইউজার খোঁজা
+        // find user by database email
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ error: "User not found!" });
         }
 
-        // পাসওয়ার্ড মিলছে কি না চেক করা
+        // password check
         if (user.password !== password) {
             return res.status(400).json({ error: "Invalid credentials!" });
         }
