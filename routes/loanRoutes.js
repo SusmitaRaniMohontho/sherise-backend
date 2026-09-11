@@ -3,7 +3,7 @@ import Loan from "../models/Loan.js";
 
 const router = express.Router();
 
-// POST /api/loans
+
 router.post("/", async (req, res) => {
   try {
     console.log("📥 Incoming Loan Application Data:", req.body);

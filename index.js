@@ -20,6 +20,9 @@ import helpRoutes from "./routes/helpRoutes.js";
 // Mahi's Code (Loan Feature)
 import loanRoutes from "./routes/loanRoutes.js";
 
+// 🔴 UPDATED BY YOU: Your Code (Appointment Booking Feature)
+import appointmentRoutes from "./routes/appointmentRoutes.js"; 
+
 dotenv.config();
 
 const app = express();
@@ -30,8 +33,8 @@ const PORT = process.env.PORT || 5000;
 // ==========================================
 // 🔴 CORS কনফিগারেশন আপডেট করা হলো যাতে ফ্রন্টএন্ড থেকে কুকি রিসিভ হতে পারে
 app.use(cors({
-  origin: "http://localhost:5173", // তোমার ফ্রন্টএন্ডের লোকালহোস্ট ইউআরএল
-  credentials: true               // এটি কুকি এলাও করার জন্য বাধ্যতামূলক
+  origin: "http://localhost:5173", // তোমার ফ্রন্টএন্ডের লোকালহোস্ট ইউআরএল (Vite)
+  credentials: true                // এটি কুকি এলাও করার জন্য বাধ্যতামূলক
 }));
 
 app.use(express.json());
@@ -65,6 +68,9 @@ app.use("/api/help", helpRoutes);
 
 // Mahi's Work: Loan Routes
 app.use("/api/loans", loanRoutes);
+
+// 🔴 UPDATED BY YOU: Your Work - Appointment Booking Routes
+app.use("/api/appointments", appointmentRoutes);
 
 // Base Route (Server Health Check)
 app.get("/", (req, res) => {
