@@ -2,8 +2,8 @@ import express from "express";
 import User from "../models/user.js";
 
 const router = express.Router();
+//request receive
 
-// 1.for signup to database account create
 router.post("/signup", async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -16,7 +16,7 @@ router.post("/signup", async (req, res) => {
 
         // new user save
         const newUser = new User({ name, email, password });
-        await newUser.save();
+        await newUser.save();//data save database
 
         res.status(201).json({ message: "User registered successfully!" });
     } catch (err) {
@@ -24,13 +24,13 @@ router.post("/signup", async (req, res) => {
     }
 });
 
-// 2.login route for verification
+
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
         // find user by database email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email });//user er vtr rslt store
         if (!user) {
             return res.status(404).json({ error: "User not found!" });
         }
