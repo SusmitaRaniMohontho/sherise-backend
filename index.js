@@ -6,6 +6,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser"; // 🔴 কুকিজ হ্যান্ডেল করার জন্য এটি যুক্ত করা হলো
 
 // ==========================================
 // 1. ROUTE IMPORTS
@@ -27,8 +28,14 @@ const PORT = process.env.PORT || 5000;
 // ==========================================
 // 2. MIDDLEWARES
 // ==========================================
-app.use(cors());
+// 🔴 CORS কনফিগারেশন আপডেট করা হলো যাতে ফ্রন্টএন্ড থেকে কুকি রিসিভ হতে পারে
+app.use(cors({
+  origin: "http://localhost:5173", // তোমার ফ্রন্টএন্ডের লোকালহোস্ট ইউআরএল
+  credentials: true               // এটি কুকি এলাও করার জন্য বাধ্যতামূলক
+}));
+
 app.use(express.json());
+app.use(cookieParser()); // 🔴 কুকার-পার্সার মিডলওয়্যার হিসেবে যুক্ত করা হলো
 
 // ==========================================
 // 3. DATABASE CONNECTION
