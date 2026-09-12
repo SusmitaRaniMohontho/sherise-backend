@@ -102,4 +102,22 @@ router.get("/profile", async (req, res) => {
   }
 });
 
+// ==========================================
+// ৪. LOGOUT ROUTE (কুকি ক্লিয়ার বা ডিলিট করার জন্য)
+// ==========================================
+router.post("/logout", (req, res) => {
+  try {
+    // ব্রাউজার থেকে 'token' নামের কুকিটি ক্লিয়ার বা মুছে ফেলা
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false, // লকালহোস্টে false থাকবে
+    });
+
+    res.status(200).json({ message: "Logged out successfully!" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
