@@ -16,6 +16,11 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  // প্রোফাইল পেজ সমৃদ্ধ করার জন্য নতুন বায়ো ফিল্ড যুক্ত করা হলো
+  bio: {
+    type: String,
+    default: "",
+  },
   createdAt: {
     type: Date,
     default: Date.now,
