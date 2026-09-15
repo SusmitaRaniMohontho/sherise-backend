@@ -1,15 +1,13 @@
 import express from "express";
-// Help controller theke funtion gulo import kora holo
-import { createHelpMessage, getHelpMessages } from "../controllers/helpController.js";
+import { createHelpMessage, getFaqs } from "../controllers/helpController.js";
+import { verifyToken } from "../middleware/authMiddleware.js"; // Middleware-er sothik file path updated
 
-// Express router initialize kora holo
 const router = express.Router();
 
-// 1. New help message database e save korar jonno POST route
-router.post("/", createHelpMessage);
+// 1. Database theke FAQs anar route
+router.get("/faqs", getFaqs);
 
-// 2. Database theke sob help messages niye asar jonno GET route
-router.get("/", getHelpMessages);
+// 2. Token authenticate kore help message send korar route
+router.post("/", verifyToken, createHelpMessage);
 
-// Router ti onno file e use korar jonno export kora holo
 export default router;

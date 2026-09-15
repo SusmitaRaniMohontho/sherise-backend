@@ -23,6 +23,9 @@ import loanRoutes from "./routes/loanRoutes.js";
 // 🔴 UPDATED BY YOU: Your Code (Appointment Booking Feature)
 import appointmentRoutes from "./routes/appointmentRoutes.js"; 
 
+// 🔴 UPDATED BY YOU: Your Code (Provider Fetching Feature - Dynamic Database Integration)
+import providerRoutes from "./routes/providerRoutes.js";
+
 dotenv.config();
 
 const app = express();
@@ -71,6 +74,9 @@ app.use("/api/loans", loanRoutes);
 
 // 🔴 UPDATED BY YOU: Your Work - Appointment Booking Routes
 app.use("/api/appointments", appointmentRoutes);
+
+// 🔴 UPDATED BY YOU: Your Work - Service Provider Routes (ডাটাবেস থেকে প্রভাইডার ডাটা আনার জন্য)
+app.use("/api/providers", providerRoutes);
 
 // Base Route (Server Health Check)
 app.get("/", (req, res) => {
