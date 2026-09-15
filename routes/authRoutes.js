@@ -91,7 +91,7 @@ router.get("/profile", async (req, res) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     
-    // পাসওয়ার্ড বাদে ইউজারের সব ডেটা (নাম, ইমেইল, বায়ো ইত্যাদি) ফেচ করা
+    // পাসওয়ার্ড বাদে ইউজারের সব ডেটা ফেচ করা
     const user = await User.findById(decoded.userId).select("-password");
     if (!user) {
       return res.status(404).json({ error: "User not found." });
@@ -114,12 +114,14 @@ router.put("/profile/update", async (req, res) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    const { name, bio } = req.body; // ফ্রন্টএন্ড থেকে পাঠানো আপডেট ডেটা
+    
+    // 🔴 এখানে 'role' ফিল্ডটি যুক্ত করা হলো যাতে ফ্রন্টএন্ড থেকে পাঠানো রোল ব্যাকএন্ড রিসিভ করতে পারে
+    const { name, role, bio } = req.body; 
 
-    // ইউজার খুঁজে বের করে তার তথ্য আপডেট করা এবং আপডেট হওয়া নতুন ডেটা রিটার্ন করা
+    // ইউজার খুঁজে বের করে নাম, রোল ও বায়ো আপডেট করা
     const updatedUser = await User.findByIdAndUpdate(
       decoded.userId,
-      { name, bio },
+      { name, role, bio }, // 🔴 ডাটাবেজে এবার role ও সেভ হবে
       { new: true, runValidators: true }
     ).select("-password");
 
@@ -141,11 +143,10 @@ router.put("/profile/update", async (req, res) => {
 // ==========================================
 router.post("/logout", (req, res) => {
   try {
-    // ব্রাউজার থেকে 'token' নামের কুকিটি ক্লিয়ার বা মুছে ফেলা
     res.clearCookie("token", {
       httpOnly: true,
       sameSite: "lax",
-      secure: false, // লকালহোস্টে false থাকবে
+      secure: false,
     });
 
     res.status(200).json({ message: "Logged out successfully!" });
