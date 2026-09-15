@@ -80,7 +80,7 @@ router.post("/login", async (req, res) => {
 });
 
 // ==========================================
-// ৩. PROTECTED PROFILE ROUTE
+// ৩. PROTECTED PROFILE ROUTE (মাই প্রোফাইল ডেটা ফেচ করার জন্য)
 // ==========================================
 router.get("/profile", async (req, res) => {
   try {
@@ -91,6 +91,7 @@ router.get("/profile", async (req, res) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     
+    // পাসওয়ার্ড বাদে ইউজারের সব ডেটা (নাম, ইমেইল, বায়ো ইত্যাদি) ফেচ করা
     const user = await User.findById(decoded.userId).select("-password");
     if (!user) {
       return res.status(404).json({ error: "User not found." });
@@ -103,7 +104,40 @@ router.get("/profile", async (req, res) => {
 });
 
 // ==========================================
-// ৪. LOGOUT ROUTE (কুকি ক্লিয়ার বা ডিলিট করার জন্য)
+// ৪. UPDATE PROFILE ROUTE (প্রোফাইল এডিট বা আপডেট করার জন্য)
+// ==========================================
+router.put("/profile/update", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "Access denied. No token provided." });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { name, bio } = req.body; // ফ্রন্টএন্ড থেকে পাঠানো আপডেট ডেটা
+
+    // ইউজার খুঁজে বের করে তার তথ্য আপডেট করা এবং আপডেট হওয়া নতুন ডেটা রিটার্ন করা
+    const updatedUser = await User.findByIdAndUpdate(
+      decoded.userId,
+      { name, bio },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res.status(200).json({ 
+      message: "Profile updated successfully!", 
+      user: updatedUser 
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// ৫. LOGOUT ROUTE (কুকি ক্লিয়ার বা ডিলিট করার জন্য)
 // ==========================================
 router.post("/logout", (req, res) => {
   try {
