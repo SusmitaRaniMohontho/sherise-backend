@@ -16,7 +16,12 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  // প্রোফাইল পেজ সমৃদ্ধ করার জন্য নতুন বায়ো ফিল্ড যুক্ত করা হলো
+  // 🔴 এই 'role' ফিল্ডটি এখানে মিসিং ছিল, তাই এটি নতুন করে যুক্ত করা হলো
+  role: {
+    type: String,
+    default: "SheRise Community Member",
+  },
+  // প্রোফাইল পেজ সমৃদ্ধ করার জন্য বায়ো ফিল্ড
   bio: {
     type: String,
     default: "",
@@ -27,7 +32,7 @@ const userSchema = new Schema({
   },
 });
 
-// 🔴 সেফ মডেল এক্সপোর্ট (যদি মডেল আগে তৈরি থাকে তবে সেটা নিবে, না থাকলে নতুন বানাবে)
+// সেফ মডেল এক্সপোর্ট
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;
