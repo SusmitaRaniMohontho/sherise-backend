@@ -20,6 +20,9 @@ import helpRoutes from "./routes/helpRoutes.js";
 // Mahi's Code (Loan Feature)
 import loanRoutes from "./routes/loanRoutes.js";
 
+// Mahi's Code (Job Application Feature)
+import jobRoutes from "./routes/jobRoutes.js"; // 👈 ADDED HERE
+
 // 🔴 UPDATED BY YOU: Your Code (Appointment Booking Feature)
 import appointmentRoutes from "./routes/appointmentRoutes.js"; 
 
@@ -34,10 +37,10 @@ const PORT = process.env.PORT || 5000;
 // ==========================================
 // 2. MIDDLEWARES
 // ==========================================
-// 🔴 CORS কনফিগারেশন আপডেট করা হলো যাতে ফ্রন্টএন্ড থেকে কুকি রিসিভ হতে পারে
+// 🔴 CORS configuration updated to allow requests from any host/origin dynamically
 app.use(cors({
-  origin: "http://localhost:5173", // তোমার ফ্রন্টএন্ডের লোকালহোস্ট ইউআরএল (Vite)
-  credentials: true                // এটি কুকি এলাও করার জন্য বাধ্যতামূলক
+  origin: true,     // Allows all localhost ports and remote origins
+  credentials: true // Required for cookie handling
 }));
 
 app.use(express.json());
@@ -50,7 +53,7 @@ app.use(cookieParser()); // 🔴 কুকার-পার্সার মিড
 mongoose
   .connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 10000, // Slow network er jonno 10 second time-out
-    family: 4,                       // IPv4 force korar jonno
+    family: 4,                         // IPv4 force korar jonno
   })
   .then(() => {
     console.log("MongoDB Connected Successfully!");
@@ -71,6 +74,9 @@ app.use("/api/help", helpRoutes);
 
 // Mahi's Work: Loan Routes
 app.use("/api/loans", loanRoutes);
+
+// Mahi's Work: Job Application Routes
+app.use("/api/jobs", jobRoutes); // 👈 ADDED HERE
 
 // 🔴 UPDATED BY YOU: Your Work - Appointment Booking Routes
 app.use("/api/appointments", appointmentRoutes);

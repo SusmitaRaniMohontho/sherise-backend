@@ -1,29 +1,70 @@
 import express from "express";
 import Loan from "../models/Loan.js";
+import { verifyToken } from "../middleware/authMiddleware.js";; // 👈 Required to verify token and get userId
 
 const router = express.Router();
 
-
-router.post("/", async (req, res) => {
+// POST: Submit a new loan application (Protected with verifyToken)
+router.post("/", verifyToken, async (req, res) => {
   try {
-    console.log("📥 Incoming Loan Application Data:", req.body);
+    const { name, address, phone, email, amount } = req.body;
+    
+    // 🛡️ Extract userId from the verified token middleware
+    const userId = req.user?.id || req.user?.userId;
 
-    const { name, address, contact, amount } = req.body;
+    // 🔴 TERMINAL LOGGING: Displays incoming loan details in backend console
+    console.log("\n===========================================");
+    console.log("📥 NEW LOAN APPLICATION RECEIVED:");
+    console.log("User ID from Token:", userId);
+    console.log("Full Name         :", name);
+    console.log("Address           :", address);
+    console.log("Phone Number      :", phone);
+    console.log("Email             :", email);
+    console.log("Loan Amount       :", amount);
+    console.log("===========================================\n");
 
-    if (!name || !address || !contact || !amount) {
-      console.log("⚠️ Validation Failed: Missing required fields.");
-      return res.status(400).json({ message: "All fields are required" });
+    // Validate that required fields are non-empty
+    if (
+      !name?.trim() ||
+      !address?.trim() ||
+      !phone?.trim() ||
+      !email?.trim() ||
+      !amount?.trim()
+    ) {
+      return res.status(400).json({ message: "All fields are required!" });
     }
 
-    const newLoan = new Loan({ name, address, contact, amount });
-    const savedLoan = await newLoan.save();
+    // 👈 userId is now included here to satisfy your Loan.js schema requirement
+    const newLoan = new Loan({
+      userId, 
+      name,
+      address,
+      phone,
+      email,
+      amount,
+    });
 
-    console.log("✅ Successfully Saved to MongoDB:", savedLoan);
+    await newLoan.save();
 
-    res.status(201).json({ message: "Loan application submitted successfully!", data: savedLoan });
+    console.log("✅ LOAN APPLICATION SAVED TO DATABASE SUCCESSFULLY!\n");
+
+    return res.status(201).json({
+      message: "Loan application submitted successfully!",
+      loan: newLoan,
+    });
   } catch (error) {
-    console.error("❌ Error Saving Loan Application:", error.message);
-    res.status(500).json({ message: "Server error, please try again." });
+    console.error("❌ ERROR SAVING LOAN:", error.message);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// GET: Fetch all submitted loan applications (Protected with verifyToken)
+router.get("/", verifyToken, async (req, res) => {
+  try {
+    const loans = await Loan.find().sort({ createdAt: -1 });
+    return res.status(200).json(loans);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 });
 
