@@ -6,7 +6,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import cookieParser from "cookie-parser"; // 🔴 কুকিজ হ্যান্ডেল করার জন্য এটি যুক্ত করা হলো
+import cookieParser from "cookie-parser"; // for cookie handling
 
 // ==========================================
 // 1. ROUTE IMPORTS
@@ -39,12 +39,12 @@ const PORT = process.env.PORT || 5000;
 // ==========================================
 // 🔴 CORS configuration updated to allow frontend port and credentials (cookies)
 app.use(cors({
-  origin: "http://localhost:5173", // তোমার ফ্রন্টএন্ডের পোর্ট (ভিট বা রিয়াক্ট অ্যাপের জন্য)
-  credentials: true                // কুকি আদান-প্রদান নিশ্চিত করার জন্য অত্যন্ত জরুরি
+  origin: "http://localhost:5173", // Ankita's viter default port
+  credentials: true                //for cookie sent and rcv
 }));
 
 app.use(express.json());
-app.use(cookieParser()); // 🔴 কুকার-পার্সার মিডলওয়্যার হিসেবে যুক্ত করা হলো
+app.use(cookieParser()); // ccokie parser middlewears hisebe add kora holo
 // ==========================================
 // 3. DATABASE CONNECTION
 // ==========================================
