@@ -37,15 +37,14 @@ const PORT = process.env.PORT || 5000;
 // ==========================================
 // 2. MIDDLEWARES
 // ==========================================
-// 🔴 CORS configuration updated to allow requests from any host/origin dynamically
+// 🔴 CORS configuration updated to allow frontend port and credentials (cookies)
 app.use(cors({
-  origin: true,     // Allows all localhost ports and remote origins
-  credentials: true // Required for cookie handling
+  origin: "http://localhost:5173", // তোমার ফ্রন্টএন্ডের পোর্ট (ভিট বা রিয়াক্ট অ্যাপের জন্য)
+  credentials: true                // কুকি আদান-প্রদান নিশ্চিত করার জন্য অত্যন্ত জরুরি
 }));
 
 app.use(express.json());
 app.use(cookieParser()); // 🔴 কুকার-পার্সার মিডলওয়্যার হিসেবে যুক্ত করা হলো
-
 // ==========================================
 // 3. DATABASE CONNECTION
 // ==========================================
