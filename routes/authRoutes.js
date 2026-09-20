@@ -118,7 +118,7 @@ router.get("/profile", async (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);
 
     // Find user from database
-    const user = await User.findById(decoded.userId).select("-password");
+    const user = await User.findById(decoded.userId).select("-password");//password field bad dewa hcche
 
     if (!user) {
       return res.status(404).json({
