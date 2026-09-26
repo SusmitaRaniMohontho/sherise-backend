@@ -32,7 +32,7 @@ router.post("/signup", async (req, res) => {
       password: hashedPassword,
     });
 
-    await newUser.save();
+    await newUser.save();//database e save
 
     res.status(201).json({
       message: "User registered successfully!",
