@@ -21,30 +21,34 @@ import helpRoutes from "./routes/helpRoutes.js";
 import loanRoutes from "./routes/loanRoutes.js";
 
 // Mahi's Code (Job Application Feature)
-import jobRoutes from "./routes/jobRoutes.js"; // 👈 ADDED HERE
+import jobRoutes from "./routes/jobRoutes.js"; 
 
-// 🔴 UPDATED BY YOU: Your Code (Appointment Booking Feature)
+// Your Code (Appointment Booking Feature)
 import appointmentRoutes from "./routes/appointmentRoutes.js"; 
 
-// 🔴 UPDATED BY YOU: Your Code (Provider Fetching Feature - Dynamic Database Integration)
+// Your Code (Provider Fetching Feature - Dynamic Database Integration)
 import providerRoutes from "./routes/providerRoutes.js";
 
+// Your Code (Educational Content Feature - Articles & Digital Library)
+import educationalRoutes from "./routes/educationalRoutes.js"; 
+
+// ==========================================
+// 2. CONFIGURATION & MIDDLEWARES
+// ==========================================
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ==========================================
-// 2. MIDDLEWARES
-// ==========================================
-// 🔴 CORS configuration updated to allow frontend port and credentials (cookies)
+// CORS configuration (allow frontend port and credentials)
 app.use(cors({
-  origin: "http://localhost:5173", // Ankita's viter default port
-  credentials: true                //for cookie sent and rcv
+  origin: "http://localhost:5173", // Ankita's vite default port
+  credentials: true                // for cookie sent and rcv
 }));
 
 app.use(express.json());
-app.use(cookieParser()); // ccokie parser middlewears hisebe add kora holo
+app.use(cookieParser()); // cookie parser middleware
+
 // ==========================================
 // 3. DATABASE CONNECTION
 // ==========================================
@@ -52,7 +56,7 @@ app.use(cookieParser()); // ccokie parser middlewears hisebe add kora holo
 mongoose
   .connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 10000, // Slow network er jonno 10 second time-out
-    family: 4,                         // IPv4 force korar jonno
+    family: 4,                       // IPv4 force korar jonno
   })
   .then(() => {
     console.log("MongoDB Connected Successfully!");
@@ -75,13 +79,16 @@ app.use("/api/help", helpRoutes);
 app.use("/api/loans", loanRoutes);
 
 // Mahi's Work: Job Application Routes
-app.use("/api/jobs", jobRoutes); // 👈 ADDED HERE
+app.use("/api/jobs", jobRoutes);
 
-// 🔴 UPDATED BY YOU: Your Work - Appointment Booking Routes
+// Your Work: Appointment Booking Routes
 app.use("/api/appointments", appointmentRoutes);
 
-// 🔴 UPDATED BY YOU: Your Work - Service Provider Routes (ডাটাবেস থেকে প্রভাইডার ডাটা আনার জন্য)
+// Your Work: Service Provider Routes (Database integration)
 app.use("/api/providers", providerRoutes);
+
+// Your Work: Educational Content Routes (Articles & Digital Library)
+app.use("/api", educationalRoutes); 
 
 // Base Route (Server Health Check)
 app.get("/", (req, res) => {
