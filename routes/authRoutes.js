@@ -30,6 +30,7 @@ router.post("/signup", async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      // systemRole defaults to "user" automatically from schema
     });
 
     await newUser.save();//database e save
@@ -45,7 +46,7 @@ router.post("/signup", async (req, res) => {
 });
 
 // ==========================================
-// 2. LOGIN
+// 2. LOGIN (MODIFIED FOR ADMIN/ROLE HANDLING)
 // ==========================================
 router.post("/login", async (req, res) => {
   try {
@@ -70,11 +71,16 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Create JWT
+    // ==========================================
+    // VIVA HIGHLIGHT: JWT PAYLOAD WITH SYSTEM ROLE
+    // We embed 'systemRole' inside the JWT token payload. 
+    // This allows the server to verify if the logged-in user is an admin or regular user.
+    // ==========================================
     const token = jwt.sign(
       {
         userId: user._id,
         email: user.email,
+        systemRole: user.systemRole, // Added systemRole for access control
       },
       JWT_SECRET,
       {
@@ -92,6 +98,7 @@ router.post("/login", async (req, res) => {
 
     res.status(200).json({
       message: "Login successful!",
+      systemRole: user.systemRole, // Optional: sending role in response if needed
     });
   } catch (err) {
     res.status(500).json({
@@ -101,7 +108,7 @@ router.post("/login", async (req, res) => {
 });
 
 // ==========================================
-// 3. GET LOGGED-IN USER PROFILE
+// 3. GET LOGGED-IN USER PROFILE (MODIFIED)
 // ==========================================
 router.get("/profile", async (req, res) => {
   try {
@@ -129,11 +136,16 @@ router.get("/profile", async (req, res) => {
     // Do not cache authentication information
     res.set("Cache-Control", "no-store");
 
-    // Send user information
+    // ==========================================
+    // VIVA HIGHLIGHT: SENDING SYSTEM ROLE TO FRONTEND
+    // We send 'systemRole' in the response so the frontend can conditionally 
+    // show or hide the Admin Dashboard UI.
+    // ==========================================
     res.status(200).json({
       name: user.name,
       email: user.email,
-      role: user.role,
+      role: user.role, // your designation field
+      systemRole: user.systemRole, // 'user' or 'admin' for UI access control
       bio: user.bio,
     });
   } catch (err) {
