@@ -11,8 +11,12 @@ import cookieParser from "cookie-parser"; // for cookie handling
 // ==========================================
 // 1. ROUTE IMPORTS
 // ==========================================
-// Ankita's Code (Authentication)
+// অঙ্কিতা সৃষ্টি (Authentication & Global Search)
 import authRoutes from "./routes/authRoutes.js"; 
+import searchRoutes from "./routes/searchRoutes.js"; // 👈 গ্লোবাল সার্চ রাউট যুক্ত করা হলো
+
+// Educational Content Routes (Articles & Books)
+import educationalRoutes from "./routes/educationalRoutes.js"; // 👈 কন্টেন্ট পেজের রাউট যুক্ত করা হলো
 
 // Susmita's Code (Help & Support)
 import helpRoutes from "./routes/helpRoutes.js"; 
@@ -23,40 +27,35 @@ import loanRoutes from "./routes/loanRoutes.js";
 // Mahi's Code (Job Application Feature)
 import jobRoutes from "./routes/jobRoutes.js"; 
 
-// Your Code (Appointment Booking Feature)
+// Appointment Booking Feature
 import appointmentRoutes from "./routes/appointmentRoutes.js"; 
 
-// Your Code (Provider Fetching Feature - Dynamic Database Integration)
+// Service Provider Fetching Feature
 import providerRoutes from "./routes/providerRoutes.js";
 
-// Your Code (Educational Content Feature - Articles & Digital Library)
-import educationalRoutes from "./routes/educationalRoutes.js"; 
-
-// ==========================================
-// 2. CONFIGURATION & MIDDLEWARES
-// ==========================================
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration (allow frontend port and credentials)
+// ==========================================
+// 2. MIDDLEWARES
+// ==========================================
 app.use(cors({
-  origin: "http://localhost:5173", // Ankita's vite default port
+  origin: "http://localhost:5173", // Frontend default port
   credentials: true                // for cookie sent and rcv
 }));
 
 app.use(express.json());
-app.use(cookieParser()); // cookie parser middleware
+app.use(cookieParser());
 
 // ==========================================
 // 3. DATABASE CONNECTION
 // ==========================================
-// MongoDB Atlas Connection Configuration
 mongoose
   .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000, // Slow network er jonno 10 second time-out
-    family: 4,                       // IPv4 force korar jonno
+    serverSelectionTimeoutMS: 10000, 
+    family: 4,                         
   })
   .then(() => {
     console.log("MongoDB Connected Successfully!");
@@ -69,26 +68,29 @@ mongoose
 // 4. API ROUTES
 // ==========================================
 
-// Ankita's Work: User Authentication Routes (Login / Register)
+// Authentication Routes (Login / Register)
 app.use("/api/auth", authRoutes);
 
-// Susmita's Work: Help & Support Routes (Contact Messages / FAQs)
+// Global Search Routes (Articles, Books, Providers, FAQs)
+app.use("/api/search", searchRoutes); 
+
+// Educational Content Routes (Articles & Books - /api/articles, /api/books)
+app.use("/api", educationalRoutes); // 👈 এখানে রেজিস্টার করা হলো যাতে /api/articles ও /api/books কাজ করে
+
+// Help & Support Routes (Contact Messages / FAQs)
 app.use("/api/help", helpRoutes);
 
-// Mahi's Work: Loan Routes
+// Loan Routes
 app.use("/api/loans", loanRoutes);
 
-// Mahi's Work: Job Application Routes
+// Job Application Routes
 app.use("/api/jobs", jobRoutes);
 
-// Your Work: Appointment Booking Routes
+// Appointment Booking Routes
 app.use("/api/appointments", appointmentRoutes);
 
-// Your Work: Service Provider Routes (Database integration)
+// Service Provider Routes
 app.use("/api/providers", providerRoutes);
-
-// Your Work: Educational Content Routes (Articles & Digital Library)
-app.use("/api", educationalRoutes); 
 
 // Base Route (Server Health Check)
 app.get("/", (req, res) => {
