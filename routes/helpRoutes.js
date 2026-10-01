@@ -1,13 +1,11 @@
 import express from "express";
-import { createHelpMessage, getFaqs } from "../controllers/helpController.js";
-import { verifyToken } from "../middleware/authMiddleware.js"; // Middleware-er sothik file path updated
+import { getFaqs, createHelpMessage } from "../controllers/helpController.js";
+import { verifyToken } from "../middleware/authMiddleware.js"; // 👈 middleware path
 
 const router = express.Router();
 
-// 1. Database theke FAQs anar route
-router.get("/faqs", getFaqs);
-
-// 2. Token authenticate kore help message send korar route
+// 🔒 Protected Routes
+router.get("/faqs", verifyToken, getFaqs);
 router.post("/", verifyToken, createHelpMessage);
 
 export default router;
