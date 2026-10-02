@@ -1,105 +1,55 @@
-import dns from "node:dns";
-dns.setServers(["8.8.8.8", "8.8.4.4"]); // ISP-er DNS blocking bypass korar jonno Google Public DNS force kora holo
-dns.setDefaultResultOrder("ipv4first");
-
 import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
-import cookieParser from "cookie-parser"; // for cookie handling
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 
-// ==========================================
-// 1. ROUTE IMPORTS
-// ==========================================
-// অঙ্কিতা সৃষ্টি (Authentication & Global Search)
-import authRoutes from "./routes/authRoutes.js"; 
-import searchRoutes from "./routes/searchRoutes.js"; // 👈 গ্লোবাল সার্চ রাউট যুক্ত করা হলো
-
-// Educational Content Routes (Articles & Books)
-import educationalRoutes from "./routes/educationalRoutes.js"; // 👈 কন্টেন্ট পেজের রাউট যুক্ত করা হলো
-
-// Susmita's Code (Help & Support)
-import helpRoutes from "./routes/helpRoutes.js"; 
-
-// Mahi's Code (Loan Feature)
-import loanRoutes from "./routes/loanRoutes.js";
-
-// Mahi's Code (Job Application Feature)
-import jobRoutes from "./routes/jobRoutes.js"; 
-
-// Appointment Booking Feature
-import appointmentRoutes from "./routes/appointmentRoutes.js"; 
-
-// Service Provider Fetching Feature
-import providerRoutes from "./routes/providerRoutes.js";
-
+// Load environment variables from a .env file
 dotenv.config();
 
+// Import your route files
+import loanRoutes from "./routes/loanRoutes.js";
+import jobRoutes from "./routes/jobRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+
+
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// ==========================================
-// 2. MIDDLEWARES
-// ==========================================
-app.use(cors({
-  origin: "http://localhost:5173", // Frontend default port
-  credentials: true                // for cookie sent and rcv
-}));
-
+// 1. Essential Middlewares
 app.use(express.json());
-app.use(cookieParser());
+app.use(cookieParser()); // Crucial for reading auth cookies in verifyToken!
 
-// ==========================================
-// 3. DATABASE CONNECTION
-// ==========================================
-mongoose
-  .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000, 
-    family: 4,                         
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:5173"], // Add your React frontend origins
+    credentials: true, // Required to allow cookies across origins
   })
+);
+
+// 2. Connect to MongoDB using environment variables or a direct fallback string
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/sherise";
+
+mongoose
+  .connect(MONGO_URI)
   .then(() => {
-    console.log("MongoDB Connected Successfully!");
+    console.log("✅ Connected to MongoDB successfully");
   })
   .catch((err) => {
-    console.error("MongoDB Connection Failed Error:", err.message);
+    console.error("❌ MongoDB connection error:", err);
   });
 
-// ==========================================
-// 4. API ROUTES
-// ==========================================
-
-// Authentication Routes (Login / Register)
-app.use("/api/auth", authRoutes);
-
-// Global Search Routes (Articles, Books, Providers, FAQs)
-app.use("/api/search", searchRoutes); 
-
-// Educational Content Routes (Articles & Books - /api/articles, /api/books)
-app.use("/api", educationalRoutes); // 👈 এখানে রেজিস্টার করা হলো যাতে /api/articles ও /api/books কাজ করে
-
-// Help & Support Routes (Contact Messages / FAQs)
-app.use("/api/help", helpRoutes);
-
-// Loan Routes
+// 3. Mount API Routes
 app.use("/api/loans", loanRoutes);
-
-// Job Application Routes
 app.use("/api/jobs", jobRoutes);
+ app.use("/api/auth", authRoutes);
 
-// Appointment Booking Routes
-app.use("/api/appointments", appointmentRoutes);
-
-// Service Provider Routes
-app.use("/api/providers", providerRoutes);
-
-// Base Route (Server Health Check)
+// Test Route
 app.get("/", (req, res) => {
-  res.send("SheRise Express Backend Server is running successfully!");
+  res.send("SheRise Backend server is up and running!");
 });
 
-// ==========================================
-// 5. SERVER INITIALIZATION
-// ==========================================
+// 4. Start Server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });

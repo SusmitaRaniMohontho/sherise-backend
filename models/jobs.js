@@ -15,8 +15,16 @@ const jobApplicationSchema = new mongoose.Schema(
     qualification: { type: String, required: true },
     skills: { type: String, required: true },
     amount: { type: String, required: true }, // Expected Salary
+    
+    // 👈 THIS FIELD IS REQUIRED FOR THE ADMIN DASHBOARD
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "rejected"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("JobApplication", jobApplicationSchema);
+const JobApplication = mongoose.models.JobApplication || mongoose.model("JobApplication", jobApplicationSchema);
+export default JobApplication;
