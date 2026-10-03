@@ -7,6 +7,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser"; // for cookie handling
+import { co2 } from "@tgwf/co2"; // CO2 emission tracker import
 
 // ==========================================
 // 1. ROUTE IMPORTS
@@ -38,6 +39,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Initialize CO2 emission calculator (Sustainable Web Design model)
+const co2Emission = new co2({ model: "swd" });
+
 // ==========================================
 // 2. MIDDLEWARES
 // ==========================================
@@ -48,6 +52,37 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+
+// Middleware to calculate network data transfer and CO2 emissions
+app.use((req, res, next) => {
+  let requestBytes = 0;
+  let responseBytes = 0;
+
+  if (req.body) requestBytes += Buffer.byteLength(JSON.stringify(req.body), "utf8");
+  if (req.query) requestBytes += Buffer.byteLength(JSON.stringify(req.query), "utf8");
+  if (req.headers) requestBytes += Buffer.byteLength(JSON.stringify(req.headers), "utf8");
+
+  const originalWrite = res.write;
+  const originalEnd = res.end;
+
+  res.write = function (chunk) {
+    if (chunk) responseBytes += Buffer.byteLength(chunk, "utf8");
+    originalWrite.apply(res, arguments);
+  };
+
+  res.end = function (chunk) {
+    if (chunk) responseBytes += Buffer.byteLength(chunk, "utf8");
+
+    res.locals.totalBytes = requestBytes + responseBytes;
+    const emissions = co2Emission.perByte(res.locals.totalBytes, false);
+
+    console.log(`[Carbon Tracking] Data: ${res.locals.totalBytes} bytes | CO2: ${emissions.toFixed(5)} grams`);
+
+    originalEnd.apply(res, arguments);
+  };
+
+  next();
+});
 
 // ==========================================
 // 3. DATABASE CONNECTION
