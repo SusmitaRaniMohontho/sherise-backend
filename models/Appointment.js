@@ -7,37 +7,46 @@ const appointmentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     providerId: {
       type: String,
       required: true,
     },
+
     providerName: {
       type: String,
       required: true,
     },
+
     userEmail: {
       type: String,
       required: true,
     },
+
     date: {
       type: String,
       required: true,
     },
+
     timeSlot: {
       type: String,
       required: true,
     },
+
     note: {
       type: String,
       default: "",
     },
+
     status: {
       type: String,
-      enum: ["Pending", "Confirmed", "Cancelled"],
+      enum: ["Pending", "Confirmed", "Rejected"],
       default: "Pending",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export default mongoose.model("Appointment", appointmentSchema);

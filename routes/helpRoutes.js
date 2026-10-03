@@ -1,11 +1,18 @@
 import express from "express";
-import { getFaqs, createHelpMessage } from "../controllers/helpController.js";
-import { verifyToken } from "../middleware/authMiddleware.js"; // 👈 middleware path
+
+import { getFaqs } from "../controllers/helpController.js";
+
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// 🔒 Protected Routes
+
+// ==========================================
+// FAQ Route
+// Login kora user-ra FAQ access korte parbe
+// ==========================================
+
 router.get("/faqs", verifyToken, getFaqs);
-router.post("/", verifyToken, createHelpMessage);
+
 
 export default router;
