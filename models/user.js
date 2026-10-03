@@ -18,17 +18,15 @@ const userSchema = new Schema({
     required: true,
   },
   
-  // This is your previous profile/designation field (Keep it as it is)
+  //  profile
   role: {
     type: String,
     default: "SheRise Community Member",
   },
   
   // ==========================================
-  // ADMIN & ACCESS CONTROL SECTION (FOR VIVA)
-  // This field handles system-level roles (e.g., 'admin' or 'user').
-  // By default, every new signup gets 'user' role for security.
-  // To make someone an admin, change this manually in the database to 'admin'.
+  // ADMIN & ACCESS CONTROL SECTION
+  
   // ==========================================
   systemRole: {
     type: String,

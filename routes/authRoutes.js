@@ -8,7 +8,7 @@ const router = express.Router();
 const JWT_SECRET =
   process.env.JWT_SECRET || "my_super_secret_jwt_key_12345";
 
-// ==========================================
+// ==============================
 // 1. SIGN UP
 // ==========================================
 router.post("/signup", async (req, res) => {
@@ -45,7 +45,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// ==========================================
+// ====================================
 // 2. LOGIN (MODIFIED FOR ADMIN/ROLE HANDLING)
 // ==========================================
 router.post("/login", async (req, res) => {
@@ -71,11 +71,11 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // ==========================================
-    // VIVA HIGHLIGHT: JWT PAYLOAD WITH SYSTEM ROLE
-    // We embed 'systemRole' inside the JWT token payload. 
+    // =======================================
+    //  JWT PAYLOAD WITH SYSTEM ROLE
+    //  embed 'systemRole' inside the JWT token payload. 
     // This allows the server to verify if the logged-in user is an admin or regular user.
-    // ==========================================
+    // =========================================
     const token = jwt.sign(
       {
         userId: user._id,
@@ -107,7 +107,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// ==========================================
+// ========================================
 // 3. GET LOGGED-IN USER PROFILE (MODIFIED)
 // ==========================================
 router.get("/profile", async (req, res) => {
@@ -136,7 +136,7 @@ router.get("/profile", async (req, res) => {
     // Do not cache authentication information
     res.set("Cache-Control", "no-store");
 
-    // ==========================================
+    // ======================================
     // VIVA HIGHLIGHT: SENDING SYSTEM ROLE TO FRONTEND
     // We send 'systemRole' in the response so the frontend can conditionally 
     // show or hide the Admin Dashboard UI.
@@ -157,7 +157,7 @@ router.get("/profile", async (req, res) => {
 
 // ==========================================
 // 4. UPDATE PROFILE
-// ==========================================
+// ========================================
 router.put("/profile/update", async (req, res) => {
   try {
     const token = req.cookies.token;
