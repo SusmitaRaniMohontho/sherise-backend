@@ -11,9 +11,9 @@ import cookieParser from "cookie-parser"; // for cookie handling
 // ==========================================
 // 1. ROUTE IMPORTS
 // ==========================================
-// অঙ্কিতা সৃষ্টি (Authentication & Global Search)
+//Ankita< code (Authentication & Global Search)
 import authRoutes from "./routes/authRoutes.js"; 
-import searchRoutes from "./routes/searchRoutes.js"; // 👈 গ্লোবাল সার্চ রাউট যুক্ত করা হলো
+import searchRoutes from "./routes/searchRoutes.js"; // 
 
 // Educational Content Routes (Articles & Books)
 import educationalRoutes from "./routes/educationalRoutes.js"; // 👈 কন্টেন্ট পেজের রাউট যুক্ত করা হলো
