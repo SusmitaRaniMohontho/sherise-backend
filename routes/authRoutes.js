@@ -137,7 +137,7 @@ router.get("/profile", async (req, res) => {
     res.set("Cache-Control", "no-store");
 
     // ======================================
-    // VIVA HIGHLIGHT: SENDING SYSTEM ROLE TO FRONTEND
+    //SENDING SYSTEM ROLE TO FRONTEND
     // We send 'systemRole' in the response so the frontend can conditionally 
     // show or hide the Admin Dashboard UI.
     // ==========================================
